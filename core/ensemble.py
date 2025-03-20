@@ -1,5 +1,6 @@
 # coding: utf-8
 __author__ = 'Roman Solovyev (ZFTurbo): https://github.com/ZFTurbo/'
+# modified by uy: https://github.com/youyang-617/Audio-Separator-UI
 
 import os
 import librosa
@@ -141,7 +142,16 @@ def ensemble_files(args):
     data = np.array(data)
     res = average_waveforms(data, weights, args.type)
     print('Result shape: {}'.format(res.shape))
-    sf.write(args.output, res.T, sr, 'FLOAT')
+    
+    # 根据文件扩展名选择合适的子类型
+    ext = os.path.splitext(args.output)[1].lower()
+    if ext == '.flac':
+        sf.write(args.output, res.T, sr, subtype='PCM_24')
+    elif ext in ['.wav', '.aiff']:
+        sf.write(args.output, res.T, sr, subtype='FLOAT')
+    else:
+        # 对于其他格式，不指定子类型
+        sf.write(args.output, res.T, sr)
     return args.output
 
 if __name__ == "__main__":
