@@ -1,0 +1,4 @@
+torch, onnx, onnxruntime, numpy, librosa, requests, six, tqdm, pydub
+只有onnx是需要手动
+pyyaml
+gradio
