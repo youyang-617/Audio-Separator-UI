@@ -54,6 +54,7 @@ def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_e
                         roformer_model = gr.Dropdown(
                             label="具体模型", 
                             choices=list(ROFORMER_MODELS["Instrumentals"].keys()),
+                            value="MelBand Roformer | INSTV7 by Gabox"
                         )
                 
                 roformer_single_stem = gr.Textbox(
@@ -180,6 +181,12 @@ def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_e
                         ensemble_instrumental = gr.Audio(label="合奏后的伴奏", type="filepath", interactive=False)
             
             # 帮助选项卡
+            try:
+                with open("help.md", "r", encoding="utf-8") as f:
+                    help_content = f.read()
+            except FileNotFoundError:
+                help_content = "帮助文件未找到，请确保项目根目录存在help.md文件"
+                
             with gr.Tab("❓ 帮助与说明"):
                 gr.Markdown("""
                 ### 🎵 Audio-Separator 使用指南
@@ -202,6 +209,9 @@ def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_e
                 - 人声分离: 尝试多个人声模型组合
                 - 乐器分离: 使用专门的乐器分离模型
                 """)
+                
+                with gr.Accordion("📖 点击查看模型选择帮助", open=False):
+                    gr.Markdown(help_content)
         
         # 底部信息
         gr.HTML("<div class='footer'>Powered by Audio-Separator 🌟🎶</div>")

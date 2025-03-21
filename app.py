@@ -213,7 +213,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # 加载配置和资源
-    ROFORMER_MODELS = load_models()
+    ROFORMER_MODELS = load_models(config_path="models_info/models.json")
     OUTPUT_FORMATS = ['wav', 'flac', 'mp3', 'ogg', 'opus', 'm4a', 'aiff', 'ac3']
     
     # 创建界面并启动
@@ -226,6 +226,7 @@ if __name__ == "__main__":
     
     app.launch(
         server_port=args.port,
+
         # server_name="0.0.0.0",  # 如需外部访问
         # share=True             # 如需分享链接
     )
