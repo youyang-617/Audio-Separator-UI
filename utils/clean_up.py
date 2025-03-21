@@ -1,5 +1,8 @@
 import os
-from venv import logger
+import logging
+
+# 获取正确的日志记录器
+logger = logging.getLogger(__name__)
 
 def cleanup_temp_files(temp_files, temp_dir=None):
     """

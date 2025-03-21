@@ -217,7 +217,8 @@ def auto_ensemble_process(audio, model_keys, seg_size, overlap, out_format, use_
             if instrumental_result:
                 instrumental_output = instrumental_result
                 logger.info(f"Instrumental ensemble saved to {instrumental_output}")
-            
+        
+        progress(0.98, desc="Cleaning up temporary files...")
         progress(1.0, desc="Ensemble complete")
         cleanup_temp_files(temp_files, temp_dir)
         # 返回处理结果
