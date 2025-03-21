@@ -1,8 +1,12 @@
 ## 介绍
 
-一个简化、但完善了 `ensemble` 功能的 [python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator/tree/main) 的UI程序。有大量参考开源代码
+一个简化、但完善了 `ensemble` 功能的 [python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator/tree/main) 的UI程序。大量参考了其他开源代码
 
-![screenshot](image/readme/screenshot.png)
+- 专注 `Rofomer` 系列模型
+- 实现了 `ensemble` 功能
+- 简单易用，说明详细
+
+![screenshot](assets/readme/screenshot.png)
 
 ## 安装
 
@@ -13,7 +17,7 @@
 
 - [ ] 能中止处理
 - [ ] 保存会话信息，保存用户上一次使用的模型和参数
-- [ ] 多语言支持
+- [x] 多语言支持
 - [ ] 简化安装
 
 
@@ -24,3 +28,7 @@
 - Thanks to [dgfsfxc-tgsacxs-otyhrhs](https://huggingface.co/spaces/ASesYusuf1/dgfsfxc-tgsacxs-otyhrhs/blob/main/gui.py), which many of the code in this repo was copied from.
 - Thanks to [Anjok07](https://github.com/Anjok07) and [Ultimate Vocal Remover GUI](https://github.com/Anjok07/ultimatevocalremovergui), which is the beginning of everything.
 - Thank you to all the authors of the open-source model involved!
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

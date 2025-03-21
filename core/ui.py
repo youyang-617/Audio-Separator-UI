@@ -2,8 +2,9 @@
 import gradio as gr
 from audio_separator.separator import Separator
 import logging
+from core.i18n import _  # 导入翻译函数
 
-# 将界面相关的函数和逻辑移动到这里
+
 def update_roformer_models(ROFORMER_MODELS, category):
     return gr.update(choices=list(ROFORMER_MODELS[category].keys()))
 
@@ -12,119 +13,119 @@ def update_ensemble_models(ROFORMER_MODELS, category):
 
 def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_ensemble_process):
     """创建音频分离界面"""
-    with gr.Blocks(theme = "NoCrypt/miku", title = "🎵 Audio-Separator 🎵") as app:
+    with gr.Blocks(theme = "NoCrypt/miku", title = "🎵Roformor-based Audio-Separator 🎵") as app:
         gr.Markdown("<h1 class='header-text'>🎵 Audio-Separator 🎵</h1>")
         
         # 共享设置区域
         with gr.Row():
             with gr.Column(scale=1):
-                gr.Markdown("### 📁 基础设置")
-                model_file_dir = gr.Textbox(value="models", label="模型缓存目录，模型将下载到项目根目录下该文件夹")
-                output_dir = gr.Textbox(value="output", label="输出目录，模型分离结果将保存到该目录")
+                gr.Markdown(f"### 📁 {_('Basic Settings')}")
+                model_file_dir = gr.Textbox(value="models", label=_("Model Cache Directory"))
+                output_dir = gr.Textbox(value="output", label=_("Output Directory"))
                 output_format = gr.Dropdown(
                     value="wav", 
                     choices=OUTPUT_FORMATS, 
-                    label="输出格式"
+                    label=_("Output Format")
                 )
         
         # 主要功能区域
         with gr.Tabs() as tabs:
             # 单模型分离选项卡
-            with gr.Tab("🎛️ 单模型分离"):
-                gr.Markdown("### 🎯 分离音频处理流程")
+            with gr.Tab(f"🎛️ {_('Single Model Separation')}"):
+                gr.Markdown(f"### 🎯 {_('Audio Separation Process')}")
                 
                 # 步骤1
-                gr.Markdown("#### 步骤 1: 上传音频")
+                gr.Markdown(f"#### {_('Step 1: Upload Audio')}")
                 roformer_audio = gr.Audio(
-                    label="输入音频文件", 
+                    label=_("Input Audio File"), 
                     type="filepath",
                     elem_id="input_audio"
                 )
                 
                 # 步骤2
-                gr.Markdown("#### 步骤 2: 选择模型与设置")
+                gr.Markdown(f"#### {_('Step 2: Select Model')}")
                 with gr.Row():
                     with gr.Column(scale=1):
                         roformer_category = gr.Dropdown(
-                            label="模型类别", 
+                            label=_("Model Category"), 
                             choices=list(ROFORMER_MODELS.keys()), 
                             value="Instrumentals"
                         )
                     with gr.Column(scale=1):
                         roformer_model = gr.Dropdown(
-                            label="具体模型", 
+                            label=_("Specific Model"), 
                             choices=list(ROFORMER_MODELS["Instrumentals"].keys()),
                             value="MelBand Roformer | INSTV7 by Gabox"
                         )
                 
                 roformer_single_stem = gr.Textbox(
-                    label="只输出单个轨道(可选)", 
-                    placeholder="例如: Instrumental、Vocals，留空则输出所有轨道"
+                    label=_("Single Track Output"), 
+                    placeholder=_("Example: Instrumental, Vocals. Leave empty for all tracks")
                 )
                 
-                with gr.Accordion("高级参数设置", open=False):
+                with gr.Accordion(_("Advanced Parameters"), open=False):
                     with gr.Row():
                         with gr.Column(scale=1):
                             roformer_seg_size = gr.Slider(32, 4000, value=256, step=32, 
-                                                        label="分段大小")
-                            gr.Markdown("*较大值提高质量但增加内存占用*")
+                                                        label=_("Segment Size"))
+                            gr.Markdown(_("*Larger values improve quality but increase memory usage*"))
                         with gr.Column(scale=1):
                             roformer_overlap = gr.Slider(2, 10, value=8, step=1, 
-                                                       label="重叠系数")
-                            gr.Markdown("*较高值可减少接缝痕迹*")
+                                                       label=_("Overlap Factor"))
+                            gr.Markdown(_("*Higher values reduce seam artifacts*"))
                     with gr.Row():
                         with gr.Column(scale=1):
                             roformer_pitch_shift = gr.Slider(-12, 12, value=0, step=1, 
-                                                          label="音高调整")
-                            gr.Markdown("*调整音高，0为不调整*")
+                                                          label=_("Pitch Adjustment"))
+                            gr.Markdown(_("*Adjust pitch, 0 for no change*"))
                         with gr.Column(scale=1):
                             roformer_override_seg_size = gr.Checkbox(
                                 value=False, 
-                                label="覆盖模型分段大小"
+                                label=_("Override Model Segment Size")
                             )
-                            gr.Markdown("*强制使用自定义分段大小*")
+                            gr.Markdown(_("*Force using custom segment size*"))
                     with gr.Row():
                         with gr.Column(scale=1):
                             norm_threshold = gr.Slider(0.1, 1, value=0.9, step=0.1, 
-                                                     label="归一化阈值")
+                                                     label=_("Normalization Threshold"))
                         with gr.Column(scale=1):
                             amp_threshold = gr.Slider(0.1, 1, value=0.6, step=0.1, 
-                                                    label="放大阈值")
+                                                    label=_("Amplification Threshold"))
                     batch_size = gr.Slider(1, 16, value=1, step=1, 
-                                          label="批处理大小")
-                    gr.Markdown("*增大可提高GPU利用率，但需要更多显存*")
+                                          label=_("Batch Size"))
+                    gr.Markdown(_("*Increase to improve GPU utilization, requires more VRAM*"))
                 
                 # 步骤3
-                gr.Markdown("#### 步骤 3: 开始处理")
-                roformer_button = gr.Button("🚀 开始分离", variant="primary", size="lg")
+                gr.Markdown(f"#### {_('Step 3: Start Processing')}")
+                roformer_button = gr.Button(f"🚀 {_('Start Separation')}", variant="primary", size="lg")
                 with gr.Row():
                     with gr.Column():
-                        gr.Markdown("##### 🎸 主要轨道")
+                        gr.Markdown(f"##### 🎸 {_('Main Track')}")
                         roformer_stem1 = gr.Audio(type="filepath", interactive=False)
                     with gr.Column():
-                        gr.Markdown("##### 🥁 次要轨道")
+                        gr.Markdown(f"##### 🥁 {_('Secondary Track')}")
                         roformer_stem2 = gr.Audio(type="filepath", interactive=False)
             
-            # 合奏选项卡
-            with gr.Tab("🎚️ 模型合奏"):
-                gr.Markdown("### 🔄 多模型合奏流程")
+            # Ensemble选项卡
+            with gr.Tab(f"🎚️ {_('Multi-model Ensemble')}"):
+                gr.Markdown(f"### 🔄 {_('Multi-model Ensemble Process')}")
                 
                 # 步骤1
-                gr.Markdown("#### 步骤 1: 上传音频")
-                ensemble_audio = gr.Audio(label="输入音频文件", type="filepath")
+                gr.Markdown(f"#### {_('Step 1: Upload Audio')}")
+                ensemble_audio = gr.Audio(label=_("Input Audio File"), type="filepath")
                 
                 # 步骤2
-                gr.Markdown("#### 步骤 2: 选择多个模型")
+                gr.Markdown(f"#### {_('Step 2: Select Multiple Models')}")
                 with gr.Row():
                     with gr.Column(scale=1):
                         ensemble_category = gr.Dropdown(
-                            label="模型类别", 
+                            label=_("Model Category"), 
                             choices=list(ROFORMER_MODELS.keys()), 
                             value="Instrumentals"
                         )
                     with gr.Column(scale=1):
                         ensemble_models = gr.Dropdown(
-                            label="选择多个模型", 
+                            label=_("Select Multiple Models"), 
                             choices=list(ROFORMER_MODELS["Instrumentals"].keys()), 
                             multiselect=True
                         )
@@ -132,85 +133,86 @@ def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_e
                 with gr.Row():
                     with gr.Column(scale=1):
                         ensemble_method = gr.Dropdown(
-                            label="合奏方法", 
+                            label=_("Ensemble Method"), 
                             choices=['avg_wave', 'median_wave', 'max_wave', 'min_wave', 
                                     'avg_fft', 'min_fft', 'max_fft'], 
                             value='avg_wave'
                         )
-                        gr.Markdown("*avg_wave通常效果最佳*")
+                        gr.Markdown(_("*avg_wave usually works best*"))
                     with gr.Column(scale=1):
                         only_instrumental = gr.Checkbox(
                             value=False, 
-                            label="仅保留伴奏轨道"
+                            label=_("Instrumental Only")
                         )
-                        gr.Markdown("*仅合奏伴奏轨道而忽略人声*")
+                        gr.Markdown(_("*Only create instrumental track and ignore vocals*"))
                 
-                with gr.Accordion("高级参数设置", open=False):
+                with gr.Accordion(_("Advanced Parameters"), open=False):
                     with gr.Row():
                         with gr.Column(scale=1):
                             ensemble_seg_size = gr.Slider(32, 4000, value=256, step=32, 
-                                                        label="分段大小")
+                                                        label=_("Segment Size"))
                         with gr.Column(scale=1):
                             ensemble_overlap = gr.Slider(2, 10, value=8, step=1, 
-                                                       label="重叠系数")
+                                                       label=_("Overlap Factor"))
                     with gr.Row():
                         with gr.Column(scale=1):
                             ensemble_use_tta = gr.Checkbox(
                                 value=False, 
-                                label="使用测试时增强(TTA)"
+                                label=_("Use Test Time Augmentation")
                             )
-                            gr.Markdown("*可提高质量但处理时间更长*")
+                            gr.Markdown(_("*Can improve quality but takes longer*"))
                         with gr.Column(scale=1):
                             norm_threshold_ensemble = gr.Slider(0.1, 1, value=0.9, step=0.1, 
-                                                              label="归一化阈值")
+                                                              label=_("Normalization Threshold"))
                             amp_threshold_ensemble = gr.Slider(0.1, 1, value=0.6, step=0.1, 
-                                                             label="放大阈值")
+                                                             label=_("Amplification Threshold"))
                     batch_size_ensemble = gr.Slider(1, 16, value=1, step=1, 
-                                                  label="批处理大小")
+                                                  label=_("Batch Size"))
                 
                 # 步骤3
-                gr.Markdown("#### 步骤 3: 开始合奏处理")
-                ensemble_button = gr.Button("🚀 开始合奏", variant="primary", size="lg")
+                gr.Markdown(f"#### {_('Step 3: Start Processing')}")
+                ensemble_button = gr.Button(f"🚀 {_('Start Ensemble')}", variant="primary", size="lg")
                 
                 with gr.Row():
                     with gr.Column():
-                        gr.Markdown("##### 🎤 人声轨道")
-                        ensemble_vocal = gr.Audio(label="合奏后的人声", type="filepath", interactive=False)
+                        gr.Markdown(f"##### 🎤 {_('Vocals Track')}")
+                        ensemble_vocal = gr.Audio(label=_("Ensemble Vocals"), type="filepath", interactive=False)
                     with gr.Column():
-                        gr.Markdown("##### 🎸 伴奏轨道")
-                        ensemble_instrumental = gr.Audio(label="合奏后的伴奏", type="filepath", interactive=False)
+                        gr.Markdown(f"##### 🎸 {_('Instrumental Track')}")
+                        ensemble_instrumental = gr.Audio(label=_("Ensemble Instrumental"), type="filepath", interactive=False)
+            
             
             # 帮助选项卡
             try:
                 with open("help.md", "r", encoding="utf-8") as f:
                     help_content = f.read()
             except FileNotFoundError:
-                help_content = "帮助文件未找到，请确保项目根目录存在help.md文件"
+                help_content = _("Help file not found, please ensure help.md exists in the project directory")
                 
-            with gr.Tab("❓ 帮助与说明"):
-                gr.Markdown("""
-                ### 🎵 Audio-Separator 使用指南
+            with gr.Tab(f"❓ {_('Help & Instructions')}"):
+                gr.Markdown(f"""
+                ### 🎵 {_('Audio-Separator User Guide')}
                 
-                #### 基本使用流程
-                1. **单模型分离**: 上传音频 → 选择模型 → 点击分离
-                2. **模型合奏**: 上传音频 → 选择多个模型 → 点击合奏
+                #### {_('Basic Workflow')}
+                1. **{_('Single Model Separation')}**: {_('Upload audio → Select model → Click separate')}
+                2. **{_('Multi-model Ensemble')}**: {_('Upload audio → Select multiple models → Click ensemble')}
                 
-                #### 常见问题
-                - **处理时间长**: 大文件或高级参数设置会增加处理时间
-                - **内存不足**: 尝试减小分段大小或批处理大小
-                - **音质问题**: 尝试不同模型或调整高级参数
+                #### {_('Common Issues')}
+                - **{_('Long processing time')}**: {_('Large files or advanced settings increase processing time')}
+                - **{_('Memory issues')}**: {_('Try reducing segment size or batch size')}
+                - **{_('Sound quality issues')}**: {_('Try different models or adjust advanced parameters')}
                 
-                #### 参数说明
-                - **分段大小**: 影响处理质量和内存使用
-                - **重叠系数**: 影响接缝平滑度
-                - **合奏方法**: 不同的信号组合方式
+                #### {_('Parameter Descriptions')}
+                - **{_('Segment Size')}**: {_('Affects processing quality and memory usage')}
+                - **{_('Overlap Factor')}**: {_('Affects seam smoothness')}
+                - **{_('Ensemble Method')}**: {_('Different ways to combine signals')}
                 
-                #### 推荐模型组合
-                - 人声分离: 尝试多个人声模型组合
-                - 乐器分离: 使用专门的乐器分离模型
+                #### {_('Recommended Model Combinations')}
+                - {_('Vocal separation')}: {_('Try combinations of vocal models')}
+                - {_('Instrument separation')}: {_('Use specialized instrument models')}
                 """)
                 
-                with gr.Accordion("📖 点击查看模型选择帮助", open=False):
+                with gr.Accordion(f"📖 {_('Click to view model selection help')}", open=False):
                     gr.Markdown(help_content)
         
         # 底部信息

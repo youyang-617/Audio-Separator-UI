@@ -4,8 +4,6 @@ import logging
 import gradio as gr
 import argparse
 from audio_separator.separator import Separator
-import numpy as np
-import soundfile as sf
 from core.ensemble import ensemble_files  # ensemble.py'dan import
 import json
 from core.ui import create_interface
@@ -130,14 +128,14 @@ def auto_ensemble_process(audio, model_keys, seg_size, overlap, out_format, use_
         
         logger.info(f"Found {len(vocal_stems)} vocal stems and {len(instrumental_stems)} instrumental stems")
         
-        # 检查是否有足够的轨道进行合奏
+        # 检查是否有足够的轨道进行合成
         if (not vocal_stems and not only_instrumental) or (not instrumental_stems and only_instrumental):
             raise ValueError("No valid stems for ensemble.")
         
         vocal_output = None
         instrumental_output = None
         
-        # 处理人声轨道合奏（如果不是只要伴奏）
+        # 处理人声轨道合成（如果不是只要伴奏）
         if vocal_stems and not only_instrumental:
             progress(0.85, desc="Creating vocal ensemble...")
             vocal_output_file = os.path.join(out_dir, f"{base_name}_ensemble_vocals_{ensemble_method}.{out_format}")
@@ -150,7 +148,7 @@ def auto_ensemble_process(audio, model_keys, seg_size, overlap, out_format, use_
                 vocal_output = vocal_result
                 logger.info(f"Vocal ensemble saved to {vocal_output}")
         
-        # 处理伴奏轨道合奏
+        # 处理伴奏轨道合成
         if instrumental_stems:
             progress(0.95, desc="Creating instrumental ensemble...")
             instrumental_output_file = os.path.join(out_dir, f"{base_name}_ensemble_instrumental_{ensemble_method}.{out_format}")
@@ -200,17 +198,18 @@ def auto_ensemble_process(audio, model_keys, seg_size, overlap, out_format, use_
                 pass
         raise RuntimeError(f"Ensemble failed: {e}")
 
-def update_roformer_models(category):
-    return gr.update(choices=list(ROFORMER_MODELS[category].keys()))
-
-def update_ensemble_models(category):
-    return gr.update(choices=list(ROFORMER_MODELS[category].keys()))
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Music Source Separation Web UI")
     parser.add_argument("--port", type=int, default=7860)
+    parser.add_argument("--lang", type=str, help="Language code (e.g., zh_CN, en_US)")
     args = parser.parse_args()
+    
+    # 如果指定了语言
+    if args.lang:
+        from core.i18n import I18n
+        # 重新加载指定语言
+        _ = I18n(language=args.lang)
 
     # 加载配置和资源
     ROFORMER_MODELS = load_models(config_path="models_info/models.json")
