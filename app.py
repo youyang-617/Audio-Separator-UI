@@ -4,7 +4,7 @@ import logging
 import gradio as gr
 import argparse
 from audio_separator.separator import Separator
-from core.ensemble import ensemble_files  # ensemble.py'dan import
+from core.ensemble import ensemble_files
 import json
 from core.ui import create_interface
 
@@ -87,7 +87,7 @@ def auto_ensemble_process(audio, model_keys, seg_size, overlap, out_format, use_
             separator = Separator(
                 log_level=logging.INFO,
                 model_file_dir=model_dir,
-                output_dir=temp_dir,  # 使用临时目录
+                output_dir=temp_dir,
                 output_format=out_format,
                 normalization_threshold=norm_thresh,
                 amplification_threshold=amp_thresh,

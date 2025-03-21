@@ -42,6 +42,7 @@
   "Creating instrumental ensemble...": "Creating instrumental ensemble...",
   "Loading model...": "Loading model...",
   "Separating audio...": "Separating audio...",
+  "Separation complete": "Separation complete",
   "*Larger values improve quality but increase memory usage*": "*Larger values improve quality but increase memory usage*",
   "*Higher values reduce seam artifacts*": "*Higher values reduce seam artifacts*",
   "*Adjust pitch, 0 for no change*": "*Adjust pitch, 0 for no change*",
@@ -73,5 +74,7 @@
   "Use specialized instrument models": "Use specialized instrument models",
   "Click to view model selection help": "Click to view model selection help",
   "Powered by Audio-Separator": "Powered by Audio-Separator",
-  "Separating with": "Separating with"
+  "Separating with": "Separating with",
+  "Current Status": "Current Status",
+  "The models can be manually downloaded from : " : "The models can be manually downloaded from : "
 }

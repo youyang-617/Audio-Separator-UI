@@ -193,6 +193,8 @@ def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_e
                 gr.Markdown(f"""
                 ### 🎵 {_('Audio-Separator User Guide')}
                 
+                > {_('The models can be manually downloaded from : ')} [this link](https://github.com/nomadkaraoke/python-audio-separator/releases/tag/model-configs)
+                
                 #### {_('Basic Workflow')}
                 1. **{_('Single Model Separation')}**: {_('Upload audio → Select model → Click separate')}
                 2. **{_('Multi-model Ensemble')}**: {_('Upload audio → Select multiple models → Click ensemble')}
@@ -237,7 +239,7 @@ def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_e
         )
         
         ensemble_category.change(
-            update_ensemble_models,
+            lambda cat: update_ensemble_models(ROFORMER_MODELS, cat),
             inputs=[ensemble_category],
             outputs=[ensemble_models]
         )
