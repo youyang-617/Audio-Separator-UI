@@ -2,14 +2,14 @@
 import gradio as gr
 from audio_separator.separator import Separator
 import logging
-from core.i18n import _  # 导入翻译函数
+from utils.i18n import _  # 导入翻译函数
 
 
 def update_roformer_models(ROFORMER_MODELS, category):
     return gr.update(choices=list(ROFORMER_MODELS[category].keys()))
 
 def update_ensemble_models(ROFORMER_MODELS, category):
-    return gr.update(choices=list(ROFORMER_MODELS[category].keys()))
+    return gr.update(choices=list(ROFORMER_MODELS[category].keys()), value =[])  # 切换后清空选择
 
 def create_interface(ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_ensemble_process):
     """创建音频分离界面"""
