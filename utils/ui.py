@@ -45,7 +45,7 @@ def create_interface(
         # title="🎵Roformor-based Audio-Separator 🎵"
     ) as app:
         gr.Markdown("<h1 class='header-text'>🎵 Audio-Separator 🎵</h1>")
-
+        
         # 共享设置区域
         with gr.Row():
             with gr.Column(scale=1):
@@ -377,13 +377,9 @@ def create_interface(
         )
         
         roformer_category.change(
-            on_roformer_change,
-            inputs=[
-                roformer_category, roformer_model, roformer_seg_size,
-                roformer_override_seg_size, roformer_overlap, roformer_pitch_shift,
-                norm_threshold, amp_threshold, batch_size
-            ],
-            outputs=[]
+            lambda category: update_roformer_models(ROFORMER_MODELS, category),
+            inputs=[roformer_category],
+            outputs=[roformer_model]
         )
 
         # 绑定高级参数的变更事件
@@ -401,13 +397,9 @@ def create_interface(
 
         # 绑定ensemble相关的变更事件
         ensemble_category.change(
-            on_ensemble_change,
-            inputs=[
-                ensemble_category, ensemble_models, ensemble_method, only_instrumental,
-                ensemble_seg_size, ensemble_overlap, ensemble_use_tta, 
-                norm_threshold_ensemble, amp_threshold_ensemble, batch_size_ensemble
-            ],
-            outputs=[]
+            lambda category: update_ensemble_models(ROFORMER_MODELS, category),
+            inputs=[ensemble_category],
+            outputs=[ensemble_models]
         )
 
         ensemble_models.change(

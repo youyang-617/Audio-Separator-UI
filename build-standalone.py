@@ -85,7 +85,7 @@ def create_launcher():
         
         # 复制项目文件
         print("Copying project files...")
-        shutil.copytree(".", "dist/app", ignore=shutil.ignore_patterns('dist', 'env', '__pycache__', '*.pyc', '.git', 'pip-cache', 'models', 'output'))
+        shutil.copytree(".", "dist/app", ignore=shutil.ignore_patterns('dist', 'env', '__pycache__', '*.pyc', '.git', 'pip-cache', 'models', 'output', 'user_settings.json'))
         
         # 创建一键安装脚本
         with open("dist/1.Install.bat", "w", encoding="utf-8") as f:
