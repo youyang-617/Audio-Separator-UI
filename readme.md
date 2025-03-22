@@ -16,17 +16,18 @@
 
 ## 已知问题
 
-- 模型下了一半就停止的话一定会损坏，因为模型寻找和下载用的是别人的库，要修改库非常不方便，只能麻烦大家去[this link](https://github.com/nomadkaraoke/python-audio-separator/releases/tag/model-configs)下载后手动替换了
-- 由于gradio框架限制，及时取消非常困难，反正一般也就二十秒，如果以后做win APP，正儿八经的分层做我会考虑的
+- 模型下了一半就停止的话一定会损坏，因为模型寻找和下载用的是别人的库，要修改库非常不方便，只能麻烦大家去[this link](https://github.com/nomadkaraoke/python-audio-separator/releases/tag/model-configs)下载后手动替换了。下载可以尝试[GitHub 文件加速 | 免费公益 GitHub 文件下载加速服务 | 一个小站](https://gh-proxy.ygxz.in/)或[Github Proxy 文件代理加速](https://github.akams.cn/)等文件下载公益站点，感谢慈善家们😭
+- 由于gradio框架限制，及时取消非常困难
 
 ## TO DO
 
-- [X] 能中止处理（放弃了，gradio实在太麻烦）
+- [X] 能中止处理（放弃，gradio难以完全实现）
 - [X] `ensemble` 下切换模型类别后清空
 - [X] `ensemble` 选择后检查所选模型是不是大于 1
 - [X] 错误能在前端被渲染 而不是只显示错误
 - [ ] 简化安装
-- [ ] 保存会话信息，保存用户上一次使用的模型和参数
+- [ ] 教程/文档
+- [X] 保存会话信息，保存用户上一次使用的模型和参数
 - [ ] 模型分数展示（leader board）
 - [X] 多语言支持
 

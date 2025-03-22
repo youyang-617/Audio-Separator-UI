@@ -80,5 +80,6 @@
   "Current Status": "Current Status",
   "The models can be manually downloaded from : " : "The models can be manually downloaded from : ",
   "Please select at least 2 model for ensemble processing": "Please select at least 2 model for ensemble processing",
-  "Please upload an audio file": "Please upload an audio file"
+  "Please upload an audio file": "Please upload an audio file",
+  "It is recommended to choose 2-5 models for integration. Integrating multiple good models can improve the separation effect. On the contrary, a poor model will drag down the overall effect.": "It is recommended to choose 2-5 models for integration. Integrating multiple good models can improve the separation effect. On the contrary, a poor model will drag down the overall effect."
 }

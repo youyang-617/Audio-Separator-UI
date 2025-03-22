@@ -60,3 +60,6 @@ log.txt
 # OS specific
 .DS_Store
 Thumbs.db
+
+# User Setting
+user_settings.json

@@ -1,7 +1,7 @@
 import gradio as gr
-from audio_separator.separator import Separator
-from utils.error_handler import catch_errors
-from utils.i18n import _  # 导入翻译函数
+from utils.error_handler import catch_errors # 错误处理装饰器
+from utils.i18n import _  # i18n函数
+from utils.settings import load_settings, update_single_model_settings, update_ensemble_settings, update_output_settings
 
 
 def update_roformer_models(ROFORMER_MODELS, category):
@@ -37,6 +37,9 @@ def create_interface(
     ROFORMER_MODELS, OUTPUT_FORMATS, roformer_separator, auto_ensemble_process
 ):
     """创建音频分离界面"""
+    # 加载用户设置
+    user_settings = load_settings()
+    
     with gr.Blocks(
         theme="NoCrypt/miku", title="🎵Roformor-based Audio-Separator 🎵"
     ) as app:
@@ -47,11 +50,17 @@ def create_interface(
             with gr.Column(scale=1):
                 gr.Markdown(f"### 📁 {_('Basic Settings')}")
                 model_file_dir = gr.Textbox(
-                    value="models", label=_("Model Cache Directory")
+                    value=user_settings["output"]["model_dir"], 
+                    label=_("Model Cache Directory")
                 )
-                output_dir = gr.Textbox(value="output", label=_("Output Directory"))
+                output_dir = gr.Textbox(
+                    value=user_settings["output"]["output_dir"], 
+                    label=_("Output Directory")
+                )
                 output_format = gr.Dropdown(
-                    value="wav", choices=OUTPUT_FORMATS, label=_("Output Format")
+                    value=user_settings["output"]["format"], 
+                    choices=OUTPUT_FORMATS, 
+                    label=_("Output Format")
                 )
 
         # 主要功能区域
@@ -73,13 +82,15 @@ def create_interface(
                         roformer_category = gr.Dropdown(
                             label=_("Model Category"),
                             choices=list(ROFORMER_MODELS.keys()),
-                            value="Instrumentals",
+                            value=user_settings["single_model"]["category"],
                         )
                     with gr.Column(scale=1):
+                        # 使用保存的类别获取模型列表
+                        initial_category = user_settings["single_model"]["category"]
                         roformer_model = gr.Dropdown(
                             label=_("Specific Model"),
-                            choices=list(ROFORMER_MODELS["Instrumentals"].keys()),
-                            value="MelBand Roformer | INSTV7 by Gabox",
+                            choices=list(ROFORMER_MODELS[initial_category].keys()),
+                            value=user_settings["single_model"]["model"] if user_settings["single_model"]["model"] in ROFORMER_MODELS[initial_category] else list(ROFORMER_MODELS[initial_category].keys())[0],
                         )
 
                 roformer_single_stem = gr.Textbox(
@@ -93,51 +104,57 @@ def create_interface(
                     with gr.Row():
                         with gr.Column(scale=1):
                             roformer_seg_size = gr.Slider(
-                                32, 4000, value=256, step=32, label=_("Segment Size")
+                                32, 4000, 
+                                value=user_settings["single_model"]["advanced"]["seg_size"],
+                                step=32, 
+                                label=_("Segment Size")
                             )
                             gr.Markdown(
-                                _(
-                                    "*Larger values improve quality but increase memory usage*"
-                                )
+                                _("*Larger values improve quality but increase memory usage*")
                             )
                         with gr.Column(scale=1):
                             roformer_overlap = gr.Slider(
-                                2, 10, value=8, step=1, label=_("Overlap Factor")
+                                2, 10, 
+                                value=user_settings["single_model"]["advanced"]["overlap"],
+                                step=1, 
+                                label=_("Overlap Factor")
                             )
                             gr.Markdown(_("*Higher values reduce seam artifacts*"))
                     with gr.Row():
                         with gr.Column(scale=1):
                             roformer_pitch_shift = gr.Slider(
-                                -12, 12, value=0, step=1, label=_("Pitch Adjustment")
+                                -12, 12, 
+                                value=user_settings["single_model"]["advanced"]["pitch_shift"],
+                                step=1, 
+                                label=_("Pitch Adjustment")
                             )
                             gr.Markdown(_("*Adjust pitch, 0 for no change*"))
                         with gr.Column(scale=1):
                             roformer_override_seg_size = gr.Checkbox(
-                                value=False, label=_("Override Model Segment Size")
+                                value=user_settings["single_model"]["advanced"]["override_seg_size"],
+                                label=_("Override Model Segment Size")
                             )
                             gr.Markdown(_("*Force using custom segment size*"))
                     with gr.Row():
                         with gr.Column(scale=1):
                             norm_threshold = gr.Slider(
-                                0.1,
-                                1,
-                                value=0.9,
+                                0.1, 1,
+                                value=user_settings["single_model"]["advanced"]["norm_threshold"],
                                 step=0.1,
                                 label=_("Normalization Threshold"),
                             )
                         with gr.Column(scale=1):
                             amp_threshold = gr.Slider(
-                                0.1,
-                                1,
-                                value=0.6,
+                                0.1, 1,
+                                value=user_settings["single_model"]["advanced"]["amp_threshold"],
                                 step=0.1,
                                 label=_("Amplification Threshold"),
                             )
                     batch_size = gr.Slider(
-                        1, 16, value=1, step=1, label=_("Batch Size")
-                    )
-                    gr.Markdown(
-                        _("*Increase to improve GPU utilization, requires more VRAM*")
+                        1, 16, 
+                        value=user_settings["single_model"]["advanced"]["batch_size"],
+                        step=1, 
+                        label=_("Batch Size")
                     )
 
                 # 步骤3
@@ -163,17 +180,19 @@ def create_interface(
 
                 # 步骤2
                 gr.Markdown(f"#### {_('Step 2: Select Multiple Models')}")
+                gr.Markdown("> " + _("It is recommended to choose 2-5 models for integration. Integrating multiple good models can improve the separation effect. On the contrary, a poor model will drag down the overall effect."))
                 with gr.Row():
                     with gr.Column(scale=1):
                         ensemble_category = gr.Dropdown(
                             label=_("Model Category"),
                             choices=list(ROFORMER_MODELS.keys()),
-                            value="Instrumentals",
+                            value=user_settings["ensemble"]["category"],
                         )
                     with gr.Column(scale=1):
                         ensemble_models = gr.Dropdown(
                             label=_("Select Multiple Models"),
-                            choices=list(ROFORMER_MODELS["Instrumentals"].keys()),
+                            choices=list(ROFORMER_MODELS[user_settings["ensemble"]["category"]].keys()),
+                            value=user_settings["ensemble"]["models"],
                             multiselect=True,
                         )
 
@@ -190,12 +209,13 @@ def create_interface(
                                 "min_fft",
                                 "max_fft",
                             ],
-                            value="avg_wave",
+                            value=user_settings["ensemble"]["method"],
                         )
                         gr.Markdown(_("*avg_wave usually works best*"))
                     with gr.Column(scale=1):
                         only_instrumental = gr.Checkbox(
-                            value=False, label=_("Instrumental Only")
+                            value=user_settings["ensemble"]["only_instrumental"],
+                            label=_("Instrumental Only")
                         )
                         gr.Markdown(
                             _("*Only create instrumental track and ignore vocals*")
@@ -205,35 +225,43 @@ def create_interface(
                     with gr.Row():
                         with gr.Column(scale=1):
                             ensemble_seg_size = gr.Slider(
-                                32, 4000, value=256, step=32, label=_("Segment Size")
+                                32, 4000, 
+                                value=user_settings["ensemble"]["advanced"]["seg_size"],
+                                step=32, 
+                                label=_("Segment Size")
                             )
                         with gr.Column(scale=1):
                             ensemble_overlap = gr.Slider(
-                                2, 10, value=8, step=1, label=_("Overlap Factor")
+                                2, 10, 
+                                value=user_settings["ensemble"]["advanced"]["overlap"],
+                                step=1, 
+                                label=_("Overlap Factor")
                             )
                     with gr.Row():
                         with gr.Column(scale=1):
                             ensemble_use_tta = gr.Checkbox(
-                                value=False, label=_("Use Test Time Augmentation")
+                                value=user_settings["ensemble"]["advanced"]["use_tta"],
+                                label=_("Use Test Time Augmentation")
                             )
                             gr.Markdown(_("*Can improve quality but takes longer*"))
                         with gr.Column(scale=1):
                             norm_threshold_ensemble = gr.Slider(
-                                0.1,
-                                1,
-                                value=0.9,
+                                0.1, 1,
+                                value=user_settings["ensemble"]["advanced"]["norm_threshold"],
                                 step=0.1,
                                 label=_("Normalization Threshold"),
                             )
                             amp_threshold_ensemble = gr.Slider(
-                                0.1,
-                                1,
-                                value=0.6,
+                                0.1, 1,
+                                value=user_settings["ensemble"]["advanced"]["amp_threshold"],
                                 step=0.1,
                                 label=_("Amplification Threshold"),
                             )
                     batch_size_ensemble = gr.Slider(
-                        1, 16, value=1, step=1, label=_("Batch Size")
+                        1, 16, 
+                        value=user_settings["ensemble"]["advanced"]["batch_size"],
+                        step=1, 
+                        label=_("Batch Size")
                     )
 
                 # 步骤3
@@ -291,6 +319,8 @@ def create_interface(
                 #### {_('Recommended Model Combinations')}
                 - {_('Vocal separation')}: {_('Try combinations of vocal models')}
                 - {_('Instrument separation')}: {_('Use specialized instrument models')}
+                
+                > 大陆下载模型可以通过尝试[GitHub 文件加速 | 免费公益 GitHub 文件下载加速服务 | 一个小站](https://gh-proxy.ygxz.in/)或[Github Proxy 文件代理加速](https://github.akams.cn/)等文件下载公益站点下载[this link](https://github.com/nomadkaraoke/python-audio-separator/releases/tag/model-configs)这里的模型，感谢慈善家们😭（右键所选模型→复制链接→粘贴到代理站）
                 """
                 )
 
@@ -303,11 +333,113 @@ def create_interface(
         gr.HTML("<div class='footer'>Powered by Audio-Separator 🌟🎶</div>")
 
         # 绑定事件处理
-        roformer_category.change(
-            lambda cat: update_roformer_models(ROFORMER_MODELS, cat),
-            inputs=[roformer_category],
-            outputs=[roformer_model],
+        def on_roformer_change(category, model, seg_size, override_seg_size, 
+                              overlap, pitch_shift, norm_thresh, amp_thresh, batch_size):
+            update_single_model_settings(
+                category, model, 
+                seg_size=seg_size,
+                override_seg_size=override_seg_size,
+                overlap=overlap,
+                pitch_shift=pitch_shift,
+                norm_threshold=norm_thresh,
+                amp_threshold=amp_thresh,
+                batch_size=batch_size
+            )
+            return
+
+        def on_ensemble_change(category, models, method, only_instrumental, seg_size, 
+                              overlap, use_tta, norm_thresh, amp_thresh, batch_size):
+            update_ensemble_settings(
+                category, models, method, only_instrumental,
+                seg_size=seg_size,
+                overlap=overlap,
+                use_tta=use_tta,
+                norm_threshold=norm_thresh,
+                amp_threshold=amp_thresh,
+                batch_size=batch_size
+            )
+            return
+
+        def on_output_change(format, model_dir, output_dir):
+            update_output_settings(format, model_dir, output_dir)
+            return
+
+        # 绑定各种UI元素的change事件
+        roformer_model.change(
+            on_roformer_change,
+            inputs=[
+                roformer_category, roformer_model, roformer_seg_size,
+                roformer_override_seg_size, roformer_overlap, roformer_pitch_shift,
+                norm_threshold, amp_threshold, batch_size
+            ],
+            outputs=[]
         )
+        
+        roformer_category.change(
+            on_roformer_change,
+            inputs=[
+                roformer_category, roformer_model, roformer_seg_size,
+                roformer_override_seg_size, roformer_overlap, roformer_pitch_shift,
+                norm_threshold, amp_threshold, batch_size
+            ],
+            outputs=[]
+        )
+
+        # 绑定高级参数的变更事件
+        for param in [roformer_seg_size, roformer_override_seg_size, roformer_overlap, 
+                    roformer_pitch_shift, norm_threshold, amp_threshold, batch_size]:
+            param.change(
+                on_roformer_change,
+                inputs=[
+                    roformer_category, roformer_model, roformer_seg_size,
+                    roformer_override_seg_size, roformer_overlap, roformer_pitch_shift,
+                    norm_threshold, amp_threshold, batch_size
+                ],
+                outputs=[]
+            )
+
+        # 绑定ensemble相关的变更事件
+        ensemble_category.change(
+            on_ensemble_change,
+            inputs=[
+                ensemble_category, ensemble_models, ensemble_method, only_instrumental,
+                ensemble_seg_size, ensemble_overlap, ensemble_use_tta, 
+                norm_threshold_ensemble, amp_threshold_ensemble, batch_size_ensemble
+            ],
+            outputs=[]
+        )
+
+        ensemble_models.change(
+            on_ensemble_change,
+            inputs=[
+                ensemble_category, ensemble_models, ensemble_method, only_instrumental,
+                ensemble_seg_size, ensemble_overlap, ensemble_use_tta, 
+                norm_threshold_ensemble, amp_threshold_ensemble, batch_size_ensemble
+            ],
+            outputs=[]
+        )
+
+        # 绑定ensemble的其他设置变更事件
+        for param in [ensemble_method, only_instrumental, ensemble_seg_size, ensemble_overlap,
+                    ensemble_use_tta, norm_threshold_ensemble, amp_threshold_ensemble, 
+                    batch_size_ensemble]:
+            param.change(
+                on_ensemble_change,
+                inputs=[
+                    ensemble_category, ensemble_models, ensemble_method, only_instrumental,
+                    ensemble_seg_size, ensemble_overlap, ensemble_use_tta, 
+                    norm_threshold_ensemble, amp_threshold_ensemble, batch_size_ensemble
+                ],
+                outputs=[]
+            )
+
+        # 绑定输出设置变更事件
+        for param in [output_format, model_file_dir, output_dir]:
+            param.change(
+                on_output_change,
+                inputs=[output_format, model_file_dir, output_dir],
+                outputs=[]
+            )
 
         roformer_button.click(
             roformer_separator,
@@ -329,11 +461,6 @@ def create_interface(
             outputs=[roformer_stem1, roformer_stem2],
         )
 
-        ensemble_category.change(
-            lambda cat: update_ensemble_models(ROFORMER_MODELS, cat),
-            inputs=[ensemble_category],
-            outputs=[ensemble_models],
-        )
 
         ensemble_button.click(
             lambda audio, models, *args: validate_ensemble_inputs(

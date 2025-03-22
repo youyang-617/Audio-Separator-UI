@@ -80,5 +80,6 @@
   "Current Status": "当前状态",
   "The models can be manually downloaded from : ": "模型可以从以下链接手动下载: ",
   "Please select at least 2 model for ensemble processing": "请至少选择 2 个模型进行合成处理",
-  "Please upload an audio file": "请上传音频文件"
+  "Please upload an audio file": "请上传音频文件",
+  "It is recommended to choose 2-5 models for integration. Integrating multiple good models can improve the separation effect. On the contrary, a poor model will drag down the overall effect.": "建议选择 2-5 个模型进行集成，多个好的模型集成可以提高分离效果；反之，一个差的模型会拖累整体效果。"
 }
