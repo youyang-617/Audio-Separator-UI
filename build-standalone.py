@@ -80,7 +80,7 @@ def create_launcher():
             f.write('cd %~dp0\n')
             f.write('call .\\env\\Scripts\\activate.bat\n')
             f.write('cd app\n')
-            f.write('python app\\app.py\n')
+            f.write('python app.py\n')
             f.write('if errorlevel 1 pause\n')
         
         # 复制项目文件
@@ -92,7 +92,7 @@ def create_launcher():
             f.write('@echo off\n')
             f.write('echo Extracting environment package, please wait...\n')
             f.write('mkdir env\n')
-            f.write('tar -xf audio-separator-env.tar.gz -C env\n')
+            f.write('tar -xvf audio-separator-env.tar.gz -C env\n')
             f.write('echo Environment installation completed!\n')
             f.write('echo You can now close this window and click "Start_Audio_Separator_UI.bat" to run the program\n')
             f.write('pause\n')
@@ -103,7 +103,7 @@ def create_launcher():
             f.write('cd %~dp0\n')
             f.write('call .\\env\\Scripts\\activate.bat\n')
             f.write('cd app\n')
-            f.write('python model_downloader.py\n')
+            f.write('python model_downloader_cn.py\n')
             f.write('echo Models download completed!\n')
             f.write('pause\n')
     except Exception as e:
