@@ -1,18 +1,59 @@
-## 介绍
+[anaconda | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror](https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/)
+
+## 介绍 Introduction
 
 一个简化、但完善了 `ensemble` 功能的 [python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator/tree/main) 的UI程序。大量参考了其他开源代码
 
-- 专注 `Rofomer` 系列模型
-- 实现了 `ensemble` 功能
-- 简单易用、逻辑清晰、说明详细
+A [python-audio-separator] (https://github.com/nomadkaraoke/python-audio-separator/tree/main) UI program that simplifies but improves the'ensemble 'functionality. Extensive reference to other open source code
+
+- 专注 `Rofomer` 系列模型 Focus on the'Rofomer 'series models
+- 实现了 `ensemble` 功能 Implemented the'ensemble 'function
+- 简单易用、逻辑清晰、说明详细 Simple to use, clear logic, and detailed instructions
 
 ![screenshot](assets/readme/screenshot.png)
 
-## 安装
+## 安装 Installation
 
-- 请参照[python-audio-separator](https://github.com/nomadkaraoke/python-audio-separator/tree/main) 的安装说明首先安装该库
-- 国内pip 没速度请参看[pypi | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror](https://mirrors.tuna.tsinghua.edu.cn/help/pypi/)
-- 待更新。。。
+### Nvidia GPU with CUDA or  Google Colab
+
+> 当前只测试了该环境，虽然理论上苹果肯定可以（pip安装 `pip install "audio-separator[cpu]==0.30.1"`）
+
+#### By Default
+
+Clone the repo
+
+```bash
+git clone https://github.com/youyang-617/Audio-Separator-UI.git
+cd Audio-Separator-UI
+```
+
+Create a conda environment and install the dependencies
+
+```bash
+conda create -n audio-separator python=3.11
+conda activate audio-separator
+conda install pytorch=*=*cuda* onnxruntime=*=*cuda* audio-separator -c pytorch -c conda-forge
+pip install -r requirements.txt
+```
+
+Run the app
+```bash
+python app.py
+```
+
+#### 大陆用户可尝试 `gitee`和清华源
+
+克隆仓库并打开
+
+```bash
+git clone https://gitee.com/youyang-617/Audio-Separator-UI.git
+cd Audio-Separator-UI
+```
+
+清华源配置请参考：[anaconda | 镜像站使用帮助 | 清华大学开源软件镜像站 | Tsinghua Open Source Mirror](https://mirrors.tuna.tsinghua.edu.cn/help/anaconda/)
+
+后续安装步骤同上
+
 
 ## 已知问题
 

@@ -288,7 +288,7 @@ def create_interface(
 
             # 帮助选项卡
             try:
-                with open("help.md", "r", encoding="utf-8") as f:
+                with open("docs/help.md", "r", encoding="utf-8") as f:
                     help_content = f.read()
             except FileNotFoundError:
                 help_content = _(
