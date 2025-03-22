@@ -323,6 +323,7 @@ if __name__ == "__main__":
 
     app.launch(
         server_port=args.port,
+        inbrowser=True,  # 自动打开浏览器
         # server_name="0.0.0.0",  # 如需外部访问
         # share=True             # 如需分享链接
     )

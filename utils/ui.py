@@ -42,6 +42,7 @@ def create_interface(
     
     with gr.Blocks(
         theme="NoCrypt/miku", title="🎵Roformor-based Audio-Separator 🎵"
+        # title="🎵Roformor-based Audio-Separator 🎵"
     ) as app:
         gr.Markdown("<h1 class='header-text'>🎵 Audio-Separator 🎵</h1>")
 

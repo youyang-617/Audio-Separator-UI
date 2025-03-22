@@ -1,6 +1,22 @@
+"""
+模型下载器 / Model Downloader
+
+此脚本用于从 GitHub 上下载音频分离模型。用户可以选择要下载的模型，脚本会生成下载链接并在浏览器中打开。
+This script is used to download audio separation models from GitHub. Users can select the model to download, and the script will generate a download link and open it in the browser.
+
+功能 / Features:
+1. 加载模型信息 / Load model information
+2. 显示可用模型列表 / Display available model list
+3. 生成下载链接并在浏览器中打开 / Generate download link and open in browser
+
+使用方法 / Usage:
+1. 运行脚本 / Run the script
+2. 选择要下载的模型 / Select the model to download
+3. 在浏览器中完成下载并将文件保存到指定目录 / Complete the download in the browser and save the file to the specified directory
+"""
 import json
 import os
-import requests
+import webbrowser
 from tqdm import tqdm
 
 # 模型下载基础URL
@@ -8,7 +24,7 @@ BASE_URL = "https://gitproxy.click/https://github.com/nomadkaraoke/python-audio-
 
 def load_models_info():
     """加载模型信息"""
-    with open("d:/coding/Audio-Separator-UI/models_info/models.json", "r", encoding="utf-8") as f:
+    with open("models_info/models.json", "r", encoding="utf-8") as f:
         return json.load(f)
 
 def display_models(models_info):
@@ -28,36 +44,22 @@ def display_models(models_info):
     
     return model_map
 
-def download_model(model_filename, save_dir="models"):
-    """下载模型文件"""
+def open_download_link(model_filename, save_dir="models"):
+    """生成下载链接并使用浏览器打开"""
     # 创建保存目录
     os.makedirs(save_dir, exist_ok=True)
     
     url = BASE_URL + model_filename
     save_path = os.path.join(save_dir, model_filename)
     
-    print(f"正在从以下地址下载模型: {url}")
-    print(f"保存路径: {save_path}")
+    print(f"正在打开浏览器下载链接: {url}")
+    print(f"请将下载的文件保存到: {os.path.abspath(save_dir)} 目录")
     
-    try:
-        # 开始下载
-        response = requests.get(url, stream=True)
-        response.raise_for_status()  # 如果响应状态不是200，将引发HTTPError异常
-        
-        total_size = int(response.headers.get('content-length', 0))
-        block_size = 1024  # 1 KB
-        
-        with open(save_path, 'wb') as f:
-            with tqdm(total=total_size, unit='B', unit_scale=True, desc="下载进度") as pbar:
-                for data in response.iter_content(block_size):
-                    f.write(data)
-                    pbar.update(len(data))
-        
-        print(f"模型 {model_filename} 下载完成！")
-        return True
-    except Exception as e:
-        print(f"下载失败: {str(e)}")
-        return False
+    # 打开浏览器下载
+    webbrowser.open(url)
+    
+    print(f"已打开浏览器，请在浏览器中完成下载。")
+    return True
 
 def main():
     try:
@@ -66,6 +68,13 @@ def main():
         
         # 显示模型列表并获取映射
         model_map = display_models(models_info)
+        
+        # 创建模型目录提示
+        models_dir = os.path.abspath("models")
+        if not os.path.exists(models_dir):
+            os.makedirs(models_dir)
+        print(f"\n下载的模型应保存在: {models_dir}")
+        print("下载后请确保模型文件放在上述目录中，以便程序正确加载")
         
         while True:
             # 用户输入
@@ -87,9 +96,11 @@ def main():
                 print(f"对应的模型文件: {actual_name}")
                 
                 # 下载确认
-                confirm = input("确认下载？ (y/n): ")
+                confirm = input("确认使用浏览器下载？ (y/n): ")
                 if confirm.lower() == 'y':
-                    download_model(actual_name)
+                    open_download_link(actual_name)
+                    print("\n请等待浏览器下载完成。下载后请确认文件名正确，并将文件放入模型目录。")
+                    input("按回车键继续...")
                 else:
                     print("下载已取消。")
             
@@ -98,6 +109,7 @@ def main():
     
     except Exception as e:
         print(f"发生错误: {str(e)}")
+        input("按回车键退出...")
 
 if __name__ == "__main__":
     main()
