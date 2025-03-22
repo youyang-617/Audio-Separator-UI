@@ -78,5 +78,7 @@
   "Powered by Audio-Separator": "由 Audio-Separator 驱动",
   "Separating with": "正在使用以下模型进行分离",
   "Current Status": "当前状态",
-  "The models can be manually downloaded from : ": "模型可以从以下链接手动下载: "
+  "The models can be manually downloaded from : ": "模型可以从以下链接手动下载: ",
+  "Please select at least 2 model for ensemble processing": "请至少选择 2 个模型进行合成处理",
+  "Please upload an audio file": "请上传音频文件"
 }

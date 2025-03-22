@@ -78,5 +78,7 @@
   "Powered by Audio-Separator": "Powered by Audio-Separator",
   "Separating with": "Separating with",
   "Current Status": "Current Status",
-  "The models can be manually downloaded from : " : "The models can be manually downloaded from : "
+  "The models can be manually downloaded from : " : "The models can be manually downloaded from : ",
+  "Please select at least 2 model for ensemble processing": "Please select at least 2 model for ensemble processing",
+  "Please upload an audio file": "Please upload an audio file"
 }
