@@ -5,60 +5,70 @@ import sys
 
 # 步骤1: 创建和配置conda环境
 def setup_environment():
-    print("正在创建conda环境...")
+    print("Creating conda environment...")
     subprocess.run("conda create -n audio-separator-build python=3.11 -y", shell=True)
     
-    # 安装依赖
-    print("正在安装依赖...")
+    # 创建pip缓存目录
+    os.makedirs("pip-cache", exist_ok=True)
+    
+    # 1. 先只安装pytorch和onnxruntime (不包含audio-separator)
+    print("Installing PyTorch and CUDA dependencies...")
     subprocess.run(
-        "conda run -n audio-separator-build conda install pytorch=*=*cuda* onnxruntime=*=*cuda* audio-separator -c pytorch -c conda-forge -y", 
+        "conda run -n audio-separator-build conda install pytorch=*=*cuda* onnxruntime=*=*cuda* -c pytorch -c conda-forge -y", 
         shell=True
     )
+    
+    # 2. 使用pip安装最新版本的audio-separator和其他依赖
+    print("Installing audio-separator and other dependencies...")
     subprocess.run(
-        "conda run -n audio-separator-build pip install -r requirements.txt", 
+        "conda run -n audio-separator-build pip install --cache-dir ./pip-cache -r requirements.txt", 
         shell=True
     )
+    
+    # 3. 验证安装
+    print("Verifying installation...")
+    subprocess.run("conda run -n audio-separator-build pip show audio-separator", shell=True)
     
     # 安装conda-pack
     subprocess.run("conda install -c conda-forge conda-pack -y", shell=True)
 
 # 步骤2: 打包环境
 def pack_environment():
-    print("正在打包环境...")
+    print("Packing environment...")
     os.makedirs("dist", exist_ok=True)
     subprocess.run("conda pack -n audio-separator-build -o dist/audio-separator-env.tar.gz", shell=True)
 
 # 步骤3: 创建启动器和安装程序
 def create_launcher():
-    print("正在创建启动器...")
-    with open("dist/启动 Audio-Separator-UI.bat", "w") as f:
+    print("Creating launcher...")
+    with open("dist/Start_Audio_Separator_UI.bat", "w", encoding="utf-8") as f:
         f.write('@echo off\n')
         f.write('cd %~dp0\n')
         f.write('call .\\env\\Scripts\\activate.bat\n')
-        f.write('python app.py\n')
+        f.write('python app\\app.py\n')
         f.write('if errorlevel 1 pause\n')
     
     # 复制项目文件
-    print("正在复制项目文件...")
-    shutil.copytree(".", "dist/app", ignore=shutil.ignore_patterns('dist', 'env', '__pycache__', '*.pyc', '.git'))
+    print("Copying project files...")
+    shutil.copytree(".", "dist/app", ignore=shutil.ignore_patterns('dist', 'env', '__pycache__', '*.pyc', '.git', 'pip-cache'))
     
     # 创建一键安装脚本
-    with open("dist/安装.bat", "w") as f:
+    with open("dist/Install.bat", "w", encoding="utf-8") as f:
         f.write('@echo off\n')
-        f.write('echo 正在解压环境包，请稍候...\n')
+        f.write('echo Extracting environment package, please wait...\n')
         f.write('mkdir env\n')
         f.write('tar -xf audio-separator-env.tar.gz -C env\n')
-        f.write('echo 环境安装完成！\n')
-        f.write('echo 现在可以关闭此窗口，并点击"启动 Audio-Separator-UI.bat"运行程序\n')
+        f.write('echo Environment installation completed!\n')
+        f.write('echo You can now close this window and click "Start_Audio_Separator_UI.bat" to run the program\n')
         f.write('pause\n')
     
     # 创建预下载模型的批处理
-    with open("dist/下载常用模型.bat", "w") as f:
+    with open("dist/Download_Models.bat", "w", encoding="utf-8") as f:
         f.write('@echo off\n')
         f.write('cd %~dp0\n')
         f.write('call .\\env\\Scripts\\activate.bat\n')
-        f.write('python app\\download_models.py\n')
-        f.write('echo 模型下载完成！\n')
+        f.write('python app\\model_downloader.py\n')
+        f.write('echo Models download completed!\n')
         f.write('pause\n')
 
 # 主函数
@@ -68,9 +78,9 @@ def main():
     create_launcher()
     
     print("=========================================")
-    print("构建完成！")
-    print("所有文件已保存到 dist 目录")
-    print("分发时，请打包 dist 目录下的所有文件")
+    print("Build completed!")
+    print("All files have been saved to dist directory")
+    print("For distribution, please package all files in the dist directory")
     print("=========================================")
 
 if __name__ == "__main__":
