@@ -8,19 +8,19 @@ A [python-audio-separator] (https://github.com/nomadkaraoke/python-audio-separat
 - 实现了 `ensemble` 功能 Implemented the'ensemble 'function
 - 简单易用、逻辑清晰、说明详细 Simple to use, clear logic, and detailed instructions
 
-本程序暂时只能在 `Nvidia GPU with CUDA` 或 `Google Colab` 上运行，其他平台可能会有问题 This program can only run on `Nvidia GPU with CUDA` or `Google Colab` for now, other platforms may have issues
+本程序暂时只能在 `Nvidia GPU with CUDA`  上运行，其他平台可能会有问题 This program can only run on `Nvidia GPU with CUDA` for now, other platforms may have issues
 
 ![screenshot](assets/readme/screenshot.png)
 
 ## 手动安装并运行 Installation and Run
 
-### Nvidia GPU with CUDA or Google Colab
+### Nvidia GPU with CUDA
 
-> 当前只测试了该环境，虽然理论上苹果肯定可以（pip安装 `pip install "audio-separator[cpu]==0.30.1"`）
+> 当前只测试了该环境，虽然理论上苹果可以但是没试过（pip安装 `pip install "audio-separator[cpu]==0.30.1"`）
 
-#### 安装 (Installation)
+#### 安装 Installation
 
-> 小白请下载预构建版本
+> 小白可以下载预构建版本
 
 **克隆仓库 Clone the repo**
 
@@ -88,34 +88,28 @@ python model_downloader_cn.py
 
 ### 下载预构建包 Download Pre-built Package
 
-1. 前往项目的 [Releases 页面](https://github.com/youyang-617/Audio-Separator-UI/releases)  
-   Visit the project's [Releases page](https://github.com/youyang-617/Audio-Separator-UI/releases)
-2. 下载最新版本的压缩包（通常命名为 `Audio-Separator-UI-vX.X.X.zip`）  
+1. 前往项目的 [Releases 页面](https://github.com/youyang-617/Audio-Separator-UI/releases)Visit the project's [Releases page](https://github.com/youyang-617/Audio-Separator-UI/releases)
+2. 下载最新版本的压缩包（通常命名为 `Audio-Separator-UI-vX.X.X.zip`）
    Download the latest version of the package (typically named `Audio-Separator-UI-vX.X.X.zip`)
 
 ### 安装步骤 Installation Steps
 
-1. 将下载的压缩包解压到一个没有中文路径、没有空格的目录中（如 `D:\Programs\Audio-Separator-UI`）  
-   Extract the downloaded package to a directory without spaces in the path (e.g., `D:\Programs\Audio-Separator-UI`)
-2. 打开解压后的文件夹，按顺序执行批处理文件：  
-   Open the extracted folder and execute the batch files in sequence:
-   - 双击运行 `1.Install.bat`  
-     Double-click to run `1.Install.bat`
-   - 此脚本会解压环境包并配置必要的运行环境  
-     This script will extract the environment package and configure the necessary runtime environment
-   - **注意**：解压过程可能需要几分钟，请耐心等待。如提示中所述，解压完成后可能会卡住，这是正常现象  
+1. 将下载的压缩包解压到一个没有中文路径、没有空格的目录中（如 `D:\Programs\Audio-Separator-UI`）Extract the downloaded package to a directory without spaces in the path (e.g., `D:\Programs\Audio-Separator-UI`)
+2. 打开解压后的文件夹，按顺序执行批处理文件：Open the extracted folder and execute the batch files in sequence:
+   - 双击运行 `1.Install.bat`Double-click to run `1.Install.bat`
+   - 此脚本会解压环境包并配置必要的运行环境This script will extract the environment package and configure the necessary runtime environment
+   - **注意**：解压过程可能需要几分钟，请耐心等待。如提示中所述，解压完成后可能会卡住，这是正常现象
      **Note**: The extraction process may take several minutes, please be patient. As mentioned in the prompt, it might appear to hang after completion, which is normal
 
 ### 启动应用程序 Launch the Application
 
-1. 环境安装完成后，双击运行 `2.Start_Audio_Separator_UI.bat` 启动应用程序  
-   After the environment installation is complete, double-click `2.Start_Audio_Separator_UI.bat` to launch the application
-2. 应用程序将在浏览器中打开，默认地址为 http://127.0.0.1:7860  
+1. 环境安装完成后，双击运行 `2.Start_Audio_Separator_UI.bat` 启动应用程序After the environment installation is complete, double-click `2.Start_Audio_Separator_UI.bat` to launch the application
+2. 应用程序将在浏览器中打开，默认地址为 http://127.0.0.1:7860
    The application will open in your browser at the default address http://127.0.0.1:7860
 
 ### 模型下载 Model Download
 
-首次使用时，程序会自动下载所需模型。如果下载速度过慢或失败可以双击运行 `通过代理下载模型（当且仅当实在没有办法时使用）.bat`  
+首次使用时，程序会自动下载所需模型。如果下载速度过慢或失败可以双击运行 `通过代理下载模型（当且仅当实在没有办法时使用）.bat`
 
 或者，手动下载模型到 `models` 目录下。模型文件名必须与下载的文件名一致。[请到这里下载](https://github.com/nomadkaraoke/python-audio-separator/releases/tag/model-configs)，若下载到一半可能会损坏，需要手动替换。大陆用户可以尝试[GitHub 文件加速 | 免费公益 GitHub 文件下载加速服务 | 一个小站](https://gh-proxy.ygxz.in/)或[Github Proxy 文件代理加速](https://github.akams.cn/)等文件下载公益站点
 
@@ -123,30 +117,22 @@ You can manually download the model to the 'models' directory. The model file na
 
 ### 常见问题解决 Troubleshooting Common Issues
 
-1. **环境解压卡住**：环境包较大，解压可能需要较长时间。如果长时间无响应，可以关闭窗口并重新运行 `1.Install.bat`  
-   **Environment extraction hanging**: The environment package is large and extraction may take a long time. If there is no response for a long time, you can close the window and run `1.Install.bat` again
+1. **环境解压卡住**：环境包较大，解压可能需要较长时间。如果长时间无响应，可以关闭窗口并重新运行 `1.Install.bat`**Environment extraction hanging**: The environment package is large and extraction may take a long time. If there is no response for a long time, you can close the window and run `1.Install.bat` again
+2. **模型下载中断**：如果模型下载中断，建议：**Model download interrupted**: If the model download is interrupted, it is recommended to:
 
-2. **模型下载中断**：如果模型下载中断，建议：  
-   **Model download interrupted**: If the model download is interrupted, it is recommended to:
-   - 使用代理下载批处理文件重新下载  
-     Use the proxy download batch file to download again
+   - 使用代理下载批处理文件重新下载Use the proxy download batch file to download again
    - 或参考这篇文档手动下载替换模型（上一节或已知问题）
      Or manually download and replace models
+3. **启动失败**：请检查：**Launch failure**: If the launch fails, please check:
 
-3. **启动失败**：请检查：  
-   **Launch failure**: If the launch fails, please check:
-   - 是否按顺序执行了安装步骤  
-     Whether the installation steps were executed in order
-   - 安装路径是否包含中文或空格  
-     Whether the installation path contains Chinese characters or spaces
-   - 是否有其他实例正在运行  
-     Whether there are other instances running
+   - 是否按顺序执行了安装步骤Whether the installation steps were executed in order
+   - 安装路径是否包含中文或空格Whether the installation path contains Chinese characters or spaces
+   - 是否有其他实例正在运行Whether there are other instances running
    - 大陆用户建议挂个梯子
-
 
 ### 卸载方法 Uninstallation Method
 
-直接删除整个程序文件夹即可完成卸载，预构建版本不会修改系统注册表  
+直接删除整个程序文件夹即可完成卸载，预构建版本不会修改系统注册表
 Simply delete the entire program folder to complete the uninstallation. The pre-built version does not modify the system registry
 
 ## 已知问题
